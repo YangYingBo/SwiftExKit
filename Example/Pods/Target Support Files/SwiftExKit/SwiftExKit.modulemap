@@ -1,0 +1,6 @@
+framework module SwiftExKit {
+  umbrella header "SwiftExKit-umbrella.h"
+
+  export *
+  module * { export * }
+}
