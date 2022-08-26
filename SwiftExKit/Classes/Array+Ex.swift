@@ -1,13 +1,13 @@
 //
 //  Array+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 1/21/21.
 //
 
 import Foundation
 
-extension Array: SwiftExCompatible {}
+extension Array: SwiftExKitCompatible {}
 public extension SwiftExKit where Base: ExpressibleByArrayLiteral, Base.ArrayLiteralElement: Hashable {
     
     func index(_ idx: Int) -> Base.ArrayLiteralElement? {

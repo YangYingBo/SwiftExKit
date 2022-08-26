@@ -1,6 +1,6 @@
 //
 //  UINavigationBar+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/29/20.
 //
@@ -14,40 +14,60 @@ public extension SwiftExKit where Base: UINavigationBar {
     }
     
     func setTitleColor(_ color: UIColor) {
-        if var titleTextAttributes = base.titleTextAttributes {
-            titleTextAttributes[.foregroundColor] = color
-            base.titleTextAttributes = titleTextAttributes
+        if #available(iOS 13.0, *) {
+            base.standardAppearance.titleTextAttributes = [.foregroundColor: color]
         } else {
-            base.titleTextAttributes = [.foregroundColor: color]
+            if var titleTextAttributes = base.titleTextAttributes {
+                titleTextAttributes[.foregroundColor] = color
+                base.titleTextAttributes = titleTextAttributes
+            } else {
+                base.titleTextAttributes = [.foregroundColor: color]
+            }
         }
+        
     }
     
     @available(iOS 11.0, *)
     func setLargeTitleColor(_ color: UIColor) {
-        if var largeTitleTextAttributes = base.largeTitleTextAttributes {
-            largeTitleTextAttributes[.foregroundColor] = color
-            base.largeTitleTextAttributes = largeTitleTextAttributes
+        if #available(iOS 13.0, *) {
+            base.standardAppearance.largeTitleTextAttributes = [.foregroundColor: color]
         } else {
-            base.largeTitleTextAttributes = [.foregroundColor: color]
+            if var largeTitleTextAttributes = base.largeTitleTextAttributes {
+                largeTitleTextAttributes[.foregroundColor] = color
+                base.largeTitleTextAttributes = largeTitleTextAttributes
+            } else {
+                base.largeTitleTextAttributes = [.foregroundColor: color]
+            }
         }
+        
     }
     // MARK: - 设置导航栏标题字体
     func setTitleFont(_ font: UIFont) {
-        if var titleTextAttributes = base.titleTextAttributes {
-            titleTextAttributes[.font] = font
-            base.titleTextAttributes = titleTextAttributes
+        if #available(iOS 13.0, *) {
+            base.standardAppearance.titleTextAttributes = [.font: font]
         } else {
-            base.titleTextAttributes = [.font: font]
+            if var titleTextAttributes = base.titleTextAttributes {
+                titleTextAttributes[.font] = font
+                base.titleTextAttributes = titleTextAttributes
+            } else {
+                base.titleTextAttributes = [.font: font]
+            }
         }
+        
     }
     
     func setLargeTitleFont(_ font: UIFont) {
-        if var titleTextAttributes = base.titleTextAttributes {
-            titleTextAttributes[.font] = font
-            base.titleTextAttributes = titleTextAttributes
+        if #available(iOS 13.0, *) {
+            base.standardAppearance.largeTitleTextAttributes = [.font: font]
         } else {
-            base.titleTextAttributes = [.font: font]
+            if var titleTextAttributes = base.titleTextAttributes {
+                titleTextAttributes[.font] = font
+                base.titleTextAttributes = titleTextAttributes
+            } else {
+                base.titleTextAttributes = [.font: font]
+            }
         }
+        
     }
     // 设置导航栏透明度
     var alpha: CGFloat? {

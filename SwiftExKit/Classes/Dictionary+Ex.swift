@@ -1,13 +1,13 @@
 //
 //  Dictionary+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 1/8/21.
 //
 
 import Foundation
 
-extension Dictionary: SwiftExCompatible {}
+extension Dictionary: SwiftExKitCompatible {}
 public extension SwiftExKit where Base: ExpressibleByDictionaryLiteral,Base.Key: Hashable {
     
     func formatJSON() -> String? {

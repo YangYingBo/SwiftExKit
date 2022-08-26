@@ -1,6 +1,6 @@
 //
 //  UIButton+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //
@@ -8,7 +8,7 @@
 import UIKit
 import Foundation
 
-fileprivate struct UIButtonSwiftExKitAssociatedKey {
+fileprivate struct UIButtonTBExKitAssociatedKey {
     static var animationTimerKey = false
 }
 
@@ -48,11 +48,11 @@ public extension SwiftExKit where Base: UIButton {
         
         var labelSize = CGSize.zero
         if let label = self.base.titleLabel, let title = label.text {
-            labelSize = title.swe.size(label.font, size: titleSize)
+            labelSize = title.ex.size(label.font, size: titleSize)
         }
         
-        label_width = ceil(labelSize.width)
-        label_height = ceil(labelSize.height)
+        label_width = labelSize.width.ex.ceil
+        label_height = labelSize.height.ex.ceil
         
         var imageEdgeInsets = UIEdgeInsets()
         var labelEdgeInsets = UIEdgeInsets()
@@ -177,7 +177,7 @@ public extension SwiftExKit where Base: UIButton {
     
     func setBackgroundImage(_ color: UIColor, size: CGSize, corner: CGFloat = 0, for state: UIControl.State) {
         
-        let bgImage = UIImage.swe.image(color: color, size: size, corner: corner)
+        let bgImage = UIImage.ex.image(color: color, size: size, corner: corner)
         self.base.setBackgroundImage(bgImage, for: state)
         
     }
@@ -191,7 +191,7 @@ public extension SwiftExKit where Base: UIButton {
     
     func setImage(_ color: UIColor, size: CGSize, corner: CGFloat = 0, for state: UIControl.State) {
         
-        let bgImage = UIImage.swe.image(color: color, size: size, corner: corner)
+        let bgImage = UIImage.ex.image(color: color, size: size, corner: corner)
         self.base.setImage(bgImage, for: state)
         
     }
@@ -199,16 +199,20 @@ public extension SwiftExKit where Base: UIButton {
     
     var selectImageAnimationTimer: Timer {
         set {
-            objc_setAssociatedObject(self.base, &(UIButtonSwiftExKitAssociatedKey.animationTimerKey), newValue, .OBJC_ASSOCIATION_RETAIN)
+            objc_setAssociatedObject(self.base, &(UIButtonTBExKitAssociatedKey.animationTimerKey), newValue, .OBJC_ASSOCIATION_RETAIN)
         } get {
-            return objc_getAssociatedObject(self.base, &(UIButtonSwiftExKitAssociatedKey.animationTimerKey)) as! Timer
+            return objc_getAssociatedObject(self.base, &(UIButtonTBExKitAssociatedKey.animationTimerKey)) as! Timer
         }
     }
     
-    func animationToSelectImage(_ ti: TimeInterval, block: @escaping (Timer)->()) {
+    func animationToSelectImage() {
         
         if #available(iOS 10.0, *) {
-            self.selectImageAnimationTimer = Timer(timeInterval: ti, repeats: true, block: block)
+            var rotationV: CGFloat = 0
+            self.selectImageAnimationTimer = Timer(timeInterval: 0.05, repeats: true, block: { (t) in
+                self.base.imageView?.ex.rotationZ(rotationV)
+                rotationV += 30
+            })
         } else {
             // Fallback on earlier versions
         }

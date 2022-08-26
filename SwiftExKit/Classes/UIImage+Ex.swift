@@ -1,6 +1,6 @@
 //
 //  UIImage+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //
@@ -15,7 +15,7 @@ public extension SwiftExKit where Base: UIImage {
     
     /// 获取纯色圆角图片
     static func image(color:UIColor, size:CGSize, corner: CGFloat) -> UIImage {
-        return self.image(color: color, size: size).swe.imageCorner(corner)
+        return self.image(color: color, size: size).ex.imageCorner(corner)
     }
     
     static func image(color:UIColor, size:CGSize) -> UIImage {
@@ -76,5 +76,35 @@ public extension SwiftExKit where Base: UIImage {
         
         return image
         
+    }
+    
+    func translateImage(_ color: UIColor) -> UIImage {
+        // 开启一个上下文
+        UIGraphicsBeginImageContextWithOptions(self.base.size, false, self.base.scale)
+        
+        // 获取到画笔
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return self.base;
+        }
+        
+        // 移动图片
+        context.translateBy(x: 0, y: self.base.size.height)
+        context.scaleBy(x: 1.0, y: -1.0)
+        
+        // image frame
+        let imageRect = CGRect(x: 0, y: 0, width: self.base.size.width, height: self.base.size.height)
+        context.setBlendMode(.normal)
+        color.setFill()
+        context.fill(imageRect)
+        
+        context.setBlendMode(.destinationIn)
+        context.draw(self.base.cgImage!, in: imageRect)
+        // 获取绘制的图片
+        guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
+            return self.base;
+        }
+        
+        UIGraphicsEndImageContext()
+        return image
     }
 }

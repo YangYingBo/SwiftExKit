@@ -1,6 +1,6 @@
 //
 //  String+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/30/20.
 //
@@ -8,10 +8,15 @@
 import Foundation
 import UIKit
 
-extension String: SwiftExCompatible {}
+extension String: SwiftExKitCompatible {}
 
 
 public extension SwiftExKit where Base == String {
+    
+    /// 多语言适配
+    var locale: String {
+        NSLocalizedString(self.base, comment: "")
+    }
     
     // MARK: - 获取字符串大小
     /// 获取字符串 字体高度
@@ -43,6 +48,51 @@ public extension SwiftExKit where Base == String {
     /// 根据size获取字体size
     func size(_ font: UIFont, size: CGSize) -> CGSize {
         return self.base.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font:font], context: nil).size
+    }
+    /// base64解码
+    var base64Decoded: String? {
+        let remainder = self.base.count % 4
+
+        var padding = ""
+        if remainder > 0 {
+            padding = String(repeating: "=", count: 4 - remainder)
+        }
+
+        guard let data = Data(base64Encoded: self.base + padding,
+                              options: .ignoreUnknownCharacters) else { return nil }
+
+        return String(data: data, encoding: .utf8)
+    }
+    /// base64编码
+    var base64Encoded: String? {
+        // https://github.com/Reza-Rg/Base64-Swift-Extension/blob/master/Base64.swift
+        let plainData = self.base.data(using: .utf8)
+        return plainData?.base64EncodedString()
+    }
+    /// 是否含有Emoji表情符
+    var containEmoji: Bool {
+        // http://stackoverflow.com/questions/30757193/find-out-if-character-in-string-is-emoji
+        for scalar in self.base.unicodeScalars {
+            switch scalar.value {
+            case 0x1F600...0x1F64F, // Emoticons
+            0x1F300...0x1F5FF, // Misc Symbols and Pictographs
+            0x1F680...0x1F6FF, // Transport and Map
+            0x1F1E6...0x1F1FF, // Regional country flags
+            0x2600...0x26FF, // Misc symbols
+            0x2700...0x27BF, // Dingbats
+            0xE0020...0xE007F, // Tags
+            0xFE00...0xFE0F, // Variation Selectors
+            0x1F900...0x1F9FF, // Supplemental Symbols and Pictographs
+            127000...127600, // Various asian characters
+            65024...65039, // Variation selector
+            9100...9300, // Misc items
+            8400...8447: // Combining Diacritical Marks for Symbols
+                return true
+            default:
+                continue
+            }
+        }
+        return false
     }
     
     // MARK: - 截取
@@ -213,9 +263,52 @@ public extension SwiftExKit where Base == String {
     }
     /// 二进制转十六进制
     var binaryToHex: String {
-        let intValue = self.base.swe.binaryToInt
-        let hex = "\(intValue)".swe.intToHex
+        let intValue = self.base.ex.binaryToInt
+        let hex = "\(intValue)".ex.intToHex
         return hex.count % 2 == 0 ? hex : "0\(hex)"
+    }
+    
+    /// 十六进制转UInt8
+    var hexToUInt8: UInt8 {
+        let intValue = self.base.ex.hexToInt
+        return UInt8(intValue)
+    }
+    /// 十六进制转UInt16
+    var hexToUInt16: UInt16 {
+        let intValue = self.base.ex.hexToInt
+        return UInt16(intValue)
+    }
+    /// 十六进制转UInt32
+    var hexToUInt32: UInt32 {
+        let intValue = self.base.ex.hexToInt
+        return UInt32(intValue)
+    }
+    
+    /// 十六进制转UInt64
+    var hexToUInt64: UInt64 {
+        let intValue = self.base.ex.hexToInt
+        return UInt64(intValue)
+    }
+    
+    // 版本号对比
+    func compareVersion(_ newVersion: String) -> Bool {
+        
+        if newVersion.isEmpty || self.base.isEmpty {
+            return false
+        }
+        
+        let new = newVersion.components(separatedBy: ".")
+        let old = self.base.components(separatedBy: ".")
+        let count = min(new.count, old.count)
+        
+        for idx in 0..<count {
+            let newValue = Int(new[idx]) ?? 0
+            let oldValue = Int(old[idx]) ?? 0
+            if newValue == oldValue { continue }
+            return newValue > oldValue
+        }
+        
+        return false
     }
     
     // MARK: - 加密
@@ -224,37 +317,37 @@ public extension SwiftExKit where Base == String {
         if self.base.isEmpty { return nil }
         
         let data = self.base.data(using: .utf8)
-        return data?.swe.md5String()
+        return data?.ex.md5String()
     }
     
     var sha1: String? {
         if self.base.isEmpty { return nil }
         let data = self.base.data(using: .utf8)
-        return data?.swe.sha1String()
+        return data?.ex.sha1String()
     }
     
     var sha224: String? {
         if self.base.isEmpty { return nil }
         let data = self.base.data(using: .utf8)
-        return data?.swe.sha224String()
+        return data?.ex.sha224String()
     }
     
     var sha256: String? {
         if self.base.isEmpty { return nil }
         let data = self.base.data(using: .utf8)
-        return data?.swe.sha256String()
+        return data?.ex.sha256String()
     }
     
     var sha384: String? {
         if self.base.isEmpty { return nil }
         let data = self.base.data(using: .utf8)
-        return data?.swe.sha384String()
+        return data?.ex.sha384String()
     }
     
     var sha512: String? {
         if self.base.isEmpty { return nil }
         let data = self.base.data(using: .utf8)
-        return data?.swe.sha512String()
+        return data?.ex.sha512String()
     }
 }
 

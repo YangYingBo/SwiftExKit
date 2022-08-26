@@ -1,6 +1,6 @@
 //
 //  UIColor+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //  UIColor 拓展
@@ -11,9 +11,21 @@ public extension SwiftExKit where Base: UIColor {
     
     // MARK: 十六进制色值转UIColor
     static func color(_ hex: String) -> UIColor {
-        let noHashString = hex.replacingOccurrences(of: "#", with: "")
+        var noHashString = hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
+        
+        if noHashString.hasPrefix("#") {
+            noHashString = noHashString.replacingOccurrences(of: "#", with: "")
+        }
+        
+        if noHashString.hasPrefix("0X") {
+            noHashString = noHashString.replacingOccurrences(of: "0X", with: "")
+        }
+        
+        if noHashString.count < 6 {
+            return .clear
+        }
+        
         let scanner = Scanner(string: noHashString)
-//        scanner.charactersToBeSkipped = CharacterSet.symbols
         
         var hexInt: UInt32 = 0
         if #available(iOS 13.0, *) {

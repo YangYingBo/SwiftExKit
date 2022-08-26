@@ -1,13 +1,13 @@
 //
 //  Date+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/30/20.
 //  日期
 
 import Foundation
 
-extension Date: SwiftExCompatible {}
+extension Date: SwiftExKitCompatible {}
 
 public extension SwiftExKit where Base == Date {
     /// 年
@@ -145,7 +145,7 @@ public extension SwiftExKit where Base == Date {
     /// 时间戳转字符串时间
     static func stringWithTimeInterval(_ interval: TimeInterval, format: String) -> String {
         let date = Date(timeIntervalSince1970: interval)
-        return date.swe.stringWithFormat(format)
+        return date.ex.stringWithFormat(format)
         
     }
     

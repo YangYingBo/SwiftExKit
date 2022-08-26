@@ -1,6 +1,6 @@
 //
 //  UILabel+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //

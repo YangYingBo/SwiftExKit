@@ -1,60 +1,60 @@
 //
 //  NSObject+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 1/11/21.
 //
 
 import Foundation
 
-public typealias _YYBKVOBlock = (Any?, Any?, Any?) -> ()
+public typealias _TBKVOBlock = (Any?, Any?, Any?) -> ()
 
-fileprivate struct YYBObjectAssociatedKey {
-    static var YYBKVOTargets = false
-    static var YYBDebounceKey = false
+fileprivate struct TBObjectAssociatedKey {
+    static var TBKVOTargets = false
+    static var TBDebounceKey = false
 }
 
 public extension SwiftExKit where Base: NSObjectProtocol {
     
-    // MARK: - Runtime
-    @discardableResult
-    func swizzleInstanceMethod(_ originalSel: Selector, newSel: Selector ) -> Bool {
-        
-        guard let originalMethod = class_getInstanceMethod((self.base as! AnyClass), originalSel),
-              let newMethod = class_getInstanceMethod((self.base as! AnyClass), newSel) else {
-            return false
-        }
-        
-        let originalIMP = class_getMethodImplementation((self.base as! AnyClass), originalSel)
-        let newIMP = class_getMethodImplementation((self.base as! AnyClass), newSel)
-        
-        
-        
-        class_addMethod((self.base as! AnyClass), originalSel, originalIMP!, method_getTypeEncoding(originalMethod))
-        class_addMethod((self.base as! AnyClass), newSel, newIMP!, method_getTypeEncoding(newMethod))
-        
-        method_exchangeImplementations(originalMethod, newMethod)
-        
-        return true
-    }
-    
-    
-    func swizzleClassMethod(_ originalSel: Selector, newSel: Selector) -> Bool {
-        
-        guard let metaClass = object_getClass(self.base as! AnyClass),
-              let originalMethod = class_getInstanceMethod(metaClass, originalSel),
-              let newMethod = class_getInstanceMethod(metaClass, newSel) else {
-            return false
-        }
-        
-        method_exchangeImplementations(originalMethod, newMethod)
-        
-        return true
-    }
+//    // MARK: - Runtime
+//    @discardableResult
+//    func swizzleInstanceMethod(_ originalSel: Selector, newSel: Selector ) -> Bool {
+//
+//        guard let originalMethod = class_getInstanceMethod((self.base as! AnyClass), originalSel),
+//              let newMethod = class_getInstanceMethod((self.base as! AnyClass), newSel) else {
+//            return false
+//        }
+//
+//        guard let originalIMP = class_getMethodImplementation((self.base as! AnyClass), originalSel),
+//                let newIMP = class_getMethodImplementation((self.base as! AnyClass), newSel) else {
+//            return false
+//        }
+//
+//        if class_addMethod((self.base as! AnyClass), originalSel, originalIMP, method_getTypeEncoding(originalMethod)) {
+//            class_replaceMethod(self.base as! AnyClass, newSel, originalIMP, method_getTypeEncoding(originalMethod))
+//        } else {
+//            method_exchangeImplementations(originalMethod, newMethod)
+//        }
+//        return true
+//    }
+//
+//
+//    func swizzleClassMethod(_ originalSel: Selector, newSel: Selector) -> Bool {
+//
+//        guard let metaClass = object_getClass(self.base as! AnyClass),
+//              let originalMethod = class_getInstanceMethod(metaClass, originalSel),
+//              let newMethod = class_getInstanceMethod(metaClass, newSel) else {
+//            return false
+//        }
+//
+//        method_exchangeImplementations(originalMethod, newMethod)
+//
+//        return true
+//    }
     
     /// 关联强引用
     func setAssociateValue(key: UnsafeRawPointer, value: Any?) {
-        setAssociatedObject(key: key, value: value, policy: .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(key: key, value: value, policy: .OBJC_ASSOCIATION_RETAIN)
     }
     /// 关联弱引用
     func setAssociateAssign(key: UnsafeRawPointer, value: Any?) {
@@ -75,18 +75,18 @@ public extension SwiftExKit where Base: NSObjectProtocol {
     }
     
     // MARK: - 防抖动
-    var debounce: YYBDebounce {
+    var debounce: TBDebounce {
         set {
-            objc_setAssociatedObject(self.base, &(YYBObjectAssociatedKey.YYBDebounceKey), newValue, .OBJC_ASSOCIATION_RETAIN)
+            objc_setAssociatedObject(self.base, &(TBObjectAssociatedKey.TBDebounceKey), newValue, .OBJC_ASSOCIATION_RETAIN)
         }
         get {
-            objc_getAssociatedObject(self.base, &(YYBObjectAssociatedKey.YYBDebounceKey)) as! YYBDebounce
+            objc_getAssociatedObject(self.base, &(TBObjectAssociatedKey.TBDebounceKey)) as! TBDebounce
         }
     }
     
     // 在interval时间内防止暴力执行
     func debounce(interval: TimeInterval, queue: DispatchQueue = DispatchQueue.main, taskBlock: @escaping ()->()) {
-        self.debounce = YYBDebounce(interval: interval, queue: queue, taskBlock: taskBlock)
+        self.debounce = TBDebounce(interval: interval, queue: queue, taskBlock: taskBlock)
         
     }
     // 呼叫事件执行
@@ -95,28 +95,28 @@ public extension SwiftExKit where Base: NSObjectProtocol {
     }
     
     // MARK: - KVO
-    func addObserverBlock(_ keyPath: String, block: @escaping _YYBKVOBlock) {
+    func addObserverBlock(_ keyPath: String, block: @escaping _TBKVOBlock) {
         
-        let target = YYBKVOTarget(self.base as! NSObject, keyPath: keyPath, block: block)
+        let target = TBKVOTarget(self.base as! NSObject, keyPath: keyPath, block: block)
         
         var allTargetBlocks = allNSObjectObserverBlocks()
         if allTargetBlocks[keyPath] == nil {
-            var targets = [YYBKVOTarget]()
+            var targets = [TBKVOTarget]()
             targets.append(target)
             allTargetBlocks[keyPath] = targets
 
         } else {
             allTargetBlocks[keyPath]?.append(target)
         }
-        setAssociateValue(key: &(YYBObjectAssociatedKey.YYBKVOTargets), value: allTargetBlocks)
+        setAssociateValue(key: &(TBObjectAssociatedKey.TBKVOTargets), value: allTargetBlocks)
         
         
 //        if self.observerBlocks == nil {
-//            self.observerBlocks = [String: [YYBKVOTarget]]()
+//            self.observerBlocks = [String: [TBKVOTarget]]()
 //        }
 //
 //        if self.observerBlocks?[keyPath] == nil {
-//            var targets = [YYBKVOTarget]()
+//            var targets = [TBKVOTarget]()
 //            targets.append(target)
 //            self.observerBlocks?[keyPath] = targets
 //        } else {
@@ -140,36 +140,36 @@ public extension SwiftExKit where Base: NSObjectProtocol {
     }
     
     
-    fileprivate var observerBlocks: [String: [YYBKVOTarget]]? {
+    fileprivate var observerBlocks: [String: [TBKVOTarget]]? {
         set {
-            setAssociateValue(key: &(YYBObjectAssociatedKey.YYBKVOTargets), value: newValue)
+            setAssociateValue(key: &(TBObjectAssociatedKey.TBKVOTargets), value: newValue)
         }
         get {
-            getAssociatedObject(key: &(YYBObjectAssociatedKey.YYBKVOTargets)) as? [String : [YYBKVOTarget]]
+            getAssociatedObject(key: &(TBObjectAssociatedKey.TBKVOTargets)) as? [String : [TBKVOTarget]]
         }
     }
     
     
-    fileprivate func allNSObjectObserverBlocks() -> [String: [YYBKVOTarget]] {
-        var kvoTargets = getAssociatedObject(key: &(YYBObjectAssociatedKey.YYBKVOTargets))
+    fileprivate func allNSObjectObserverBlocks() -> [String: [TBKVOTarget]] {
+        var kvoTargets = getAssociatedObject(key: &(TBObjectAssociatedKey.TBKVOTargets))
         if kvoTargets == nil {
-            kvoTargets = [String:[YYBKVOTarget]]()
-            setAssociateValue(key: &(YYBObjectAssociatedKey.YYBKVOTargets), value: kvoTargets)
+            kvoTargets = [String:[TBKVOTarget]]()
+            setAssociateValue(key: &(TBObjectAssociatedKey.TBKVOTargets), value: kvoTargets)
         }
-        return kvoTargets as! [String : [YYBKVOTarget]]
+        return kvoTargets as! [String : [TBKVOTarget]]
     }
     
 }
 
 
 /// KVO 监听类
-fileprivate class YYBKVOTarget: NSObject {
+fileprivate class TBKVOTarget: NSObject {
     
-    let targetBlock: _YYBKVOBlock
+    let targetBlock: _TBKVOBlock
     weak var target: NSObject?
     var keyPath: String
     
-    init(_ target: NSObject, keyPath: String, block: @escaping _YYBKVOBlock) {
+    init(_ target: NSObject, keyPath: String, block: @escaping _TBKVOBlock) {
         self.targetBlock = block
         self.target = target
         self.keyPath = keyPath
@@ -188,6 +188,7 @@ fileprivate class YYBKVOTarget: NSObject {
         /// 移除KVO监听
         self.target?.removeObserver(self, forKeyPath: self.keyPath)
         self.target = nil
+//        YYLog("\(self) ======== 释放了 ")
     }
     
 
@@ -195,7 +196,7 @@ fileprivate class YYBKVOTarget: NSObject {
 }
 
 
-public class YYBDebounce {
+public class TBDebounce {
     
     var interval: TimeInterval
     var queue: DispatchQueue

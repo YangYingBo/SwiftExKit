@@ -1,13 +1,18 @@
 //
 //  CGFloat+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 1/4/21.
 //
 
 import UIKit
 
-extension CGFloat: SwiftExCompatible {}
+extension CGFloat: SwiftExKitCompatible {}
+extension Float: SwiftExKitCompatible {}
+
+public extension SwiftExKit where Base == Float {
+    var toInt: Int { Int(self.base) }
+}
 
 public extension SwiftExKit where Base == CGFloat {
     
@@ -48,12 +53,12 @@ public extension SwiftExKit where Base == CGFloat {
 
     /// 返回一个随机浮点数，范围在min…max
     static func random(within: Range<CGFloat>) -> CGFloat {
-        return CGFloat.swe.random() * (within.upperBound - within.lowerBound) + within.lowerBound
+        return CGFloat.ex.random() * (within.upperBound - within.lowerBound) + within.lowerBound
     }
 
     /// 返回一个随机浮点数，范围在min…max
     static func random(within: ClosedRange<CGFloat>) -> CGFloat {
-        return CGFloat.swe.random() * (within.upperBound - within.lowerBound) + within.lowerBound
+        return CGFloat.ex.random() * (within.upperBound - within.lowerBound) + within.lowerBound
     }
 
     /**
@@ -72,5 +77,43 @@ public extension SwiftExKit where Base == CGFloat {
         }
         return angle
     }
+    
+    // 绝对值
+    var abs: CGFloat {
+        return Swift.abs(self.base)
+    }
+    // 取上限
+    var ceil: CGFloat {
+        return Foundation.ceil(self.base)
+    }
+    // 取下限
+    var floor: CGFloat {
+        return Foundation.floor(self.base)
+    }
+    // 四舍五入
+    var round: CGFloat {
+        return Foundation.round(self.base)
+    }
+    // 是否是正数
+    var isPositive: Bool {
+        return self.base > 0
+    }
+    // 是否是负数
+    var isNegative: Bool {
+        return self.base < 0
+    }
+    // float
+    var float: Float {
+        return Float(self.base)
+    }
+    // int
+    var int: Int {
+        return Int(self.base)
+    }
+    // double
+    var double: Double {
+        return Double(self.base)
+    }
+    
     
 }

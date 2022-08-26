@@ -1,13 +1,13 @@
 //
 //  Optional+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/30/20.
 //
 
 import Foundation
 
-extension Optional: SwiftExCompatible {}
+extension Optional: SwiftExKitCompatible {}
 
 public extension SwiftExKit where Base: ExpressibleByNilLiteral {
     
@@ -27,38 +27,24 @@ public extension SwiftExKit where Base: ExpressibleByNilLiteral {
     
 }
 
-public extension Optional {
-    
-    // 判断是否为空
-    var isNone: Bool {
-        switch self {
-        case .none:
-            return true
-        case .some(_):
-            return false
-        }
-    }
-    // 判断是否有值
-    var isSome: Bool {
-        return !isNone
-    }
+extension Optional {
     
     // 返回默认值
-    func or(_ defaultValue: Wrapped) -> Wrapped {
+    public func or(_ defaultValue: Wrapped) -> Wrapped {
         return self ?? defaultValue
     }
     
     // 返回闭包返回值
-    func or(else: @autoclosure () -> Wrapped) -> Wrapped {
+    public func or(else: @autoclosure () -> Wrapped) -> Wrapped {
         return self ?? `else`()
     }
     // 返回闭包返回值
-    func or(else: () -> Wrapped) -> Wrapped {
+    public func or(else: ()->Wrapped) -> Wrapped {
         return self ?? `else`()
     }
     
     // 抛出异常
-    func or(_ exception: Error) throws -> Wrapped {
+    public func or(_ exception: Error) throws -> Wrapped {
         guard let unwrappend = self else {
             throw exception
         }
@@ -66,5 +52,60 @@ public extension Optional {
         return unwrappend
     }
     
+}
+
+extension Optional {
+    // 映射 为空是为默认值
+    public func map<W>(_ transform: (Wrapped) throws -> W,defaultValue:W) rethrows -> W {
+        return try map(transform) ?? defaultValue
+    }
+    // 映射 为空是为闭包返回值
+    public func map<W>(_ transform: (Wrapped) throws -> W,else:()->W) rethrows -> W {
+        return try map(transform) ?? `else`()
+    }
+    
+    
+}
+
+public extension Optional {
+    
+    // 当可选值有值时调用some闭包
+    func onSome(_ some: () throws -> Void) rethrows {
+        if self.ex.isSome {
+            try some()
+        }
+    }
+    
+    // 当可选值有值时调用some闭包
+    func onSome(_ some: (Wrapped) throws -> Void) rethrows {
+        if self.ex.isSome {
+            try some(self!)
+        }
+    }
+    
+    // 当可选值为nil时调用none闭包
+    func onNone(_ none: () throws -> Void) rethrows {
+        if self.ex.isNone {
+            try none()
+        }
+    }
+}
+
+public extension Optional {
+    // 过滤非空及其满足闭包条件
+    func filter(_ predicate: (Wrapped) -> Bool) -> Wrapped? {
+        guard let value = self,predicate(value) else {
+            return nil
+        }
+        
+        return value
+    }
+    // 期待结果 非空返回 空时报错
+    func expect(_ message: String) -> Wrapped {
+        guard let value = self else {
+            fatalError(message)
+        }
+        return value
+    }
 }
 

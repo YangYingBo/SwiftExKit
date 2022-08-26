@@ -1,6 +1,6 @@
 //
 //  UILayer+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //  CALayer 拓展
@@ -177,31 +177,47 @@ public extension SwiftExKit where Base: CALayer {
     func rotationX(_ x: CGFloat) {
         var transform = CATransform3DIdentity
         transform.m34 = 1.0 / -1000.0
-        transform = CATransform3DRotate(transform, x.swe.toRadians, 1.0, 0.0, 0.0)
+        transform = CATransform3DRotate(transform, x.ex.toRadians, 1.0, 0.0, 0.0)
         self.base.transform = transform
     }
     
     func rotationY(_ y: CGFloat) {
         var transform = CATransform3DIdentity
         transform.m34 = 1.0 / -1000.0
-        transform = CATransform3DRotate(transform, y.swe.toRadians, 0.0, 1.0, 0.0)
+        transform = CATransform3DRotate(transform, y.ex.toRadians, 0.0, 1.0, 0.0)
         self.base.transform = transform
     }
     
     func rotationZ(_ z: CGFloat) {
         var transform = CATransform3DIdentity
         transform.m34 = 1.0 / -1000.0
-        transform = CATransform3DRotate(transform, z.swe.toRadians, 0.0, 0.0, 1.0)
+        transform = CATransform3DRotate(transform, z.ex.toRadians, 0.0, 0.0, 1.0)
         self.base.transform = transform
     }
     
     func rotation(x: CGFloat, y: CGFloat, z: CGFloat) {
         var transform = CATransform3DIdentity
         transform.m34 = 1.0 / -1000.0
-        transform = CATransform3DRotate(transform, x.swe.toRadians, 1.0, 0.0, 0.0)
-        transform = CATransform3DRotate(transform, y.swe.toRadians, 0.0, 1.0, 0.0)
-        transform = CATransform3DRotate(transform, z.swe.toRadians, 0.0, 0.0, 1.0)
+        transform = CATransform3DRotate(transform, x.ex.toRadians, 1.0, 0.0, 0.0)
+        transform = CATransform3DRotate(transform, y.ex.toRadians, 0.0, 1.0, 0.0)
+        transform = CATransform3DRotate(transform, z.ex.toRadians, 0.0, 0.0, 1.0)
         self.base.transform = transform
+    }
+    // 添加旋转帧动画
+    func startRotationAnimation(_ key: String) {
+        let anim = CABasicAnimation(keyPath: "transform.rotation.z")
+        anim.toValue = 2 * Double.pi
+        anim.repeatCount = MAXFLOAT
+        anim.duration = 1
+        anim.isCumulative = true
+        anim.isRemovedOnCompletion = false
+        self.base.add(anim, forKey: "moveAnimation")
+    }
+    
+    func removeAnimation(forKey key: String) {
+        if let _ = self.base.animation(forKey: key) {
+            self.base.removeAnimation(forKey: key)
+        }
     }
     
     // MARK: - 缩放

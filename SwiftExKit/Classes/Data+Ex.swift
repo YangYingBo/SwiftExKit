@@ -1,6 +1,6 @@
 //
 //  Data+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/30/20.
 //
@@ -8,9 +8,13 @@
 import Foundation
 import CommonCrypto
 
-extension Data: SwiftExCompatible {}
+extension Data: SwiftExKitCompatible {}
 
 public extension SwiftExKit where Base == Data {
+    /// 字节数组
+    var bytes: [UInt8] {
+        return [UInt8](self.base)
+    }
     
     
     // MARK: Data转成十六进制字符串

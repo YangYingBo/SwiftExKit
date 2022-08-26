@@ -1,13 +1,13 @@
 //
 //  UIView+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //
 
 import UIKit
 
-fileprivate struct YYBViewAssociatedKey {
+fileprivate struct TBViewAssociatedKey {
     static var gestures = false
 }
 
@@ -180,10 +180,10 @@ public extension SwiftExKit where Base: UIView {
     // MARK: - 设置图片
     var layerImage: UIImage? {
         get {
-            return self.base.layer.swe.image
+            return self.base.layer.ex.image
         }
         set {
-            self.base.layer.swe.image = newValue
+            self.base.layer.ex.image = newValue
         }
     }
     
@@ -196,7 +196,7 @@ public extension SwiftExKit where Base: UIView {
     
     func setBackgroundImage(_ color: UIColor, size: CGSize, corner: CGFloat = 0) {
         
-        let bgImage = UIImage.swe.image(color: color, size: size, corner: corner)
+        let bgImage = UIImage.ex.image(color: color, size: size, corner: corner)
         self.setBackgroundImage(bgImage)
         
     }
@@ -206,37 +206,38 @@ public extension SwiftExKit where Base: UIView {
     }
     
     // MARK: - 响应事件
-   fileprivate var gestures: [YYBGestureTarget]? {
+   fileprivate var gestures: [TBGestureTarget]? {
         set {
-            objc_setAssociatedObject(self.base, &(YYBViewAssociatedKey.gestures), newValue, .OBJC_ASSOCIATION_COPY)
+            objc_setAssociatedObject(self.base, &(TBViewAssociatedKey.gestures), newValue, .OBJC_ASSOCIATION_COPY)
         }
         get {
-            objc_getAssociatedObject(self.base, &(YYBViewAssociatedKey.gestures)) as? [YYBGestureTarget]
+            objc_getAssociatedObject(self.base, &(TBViewAssociatedKey.gestures)) as? [TBGestureTarget]
         }
     }
     
     // MARK: 防抖动
     func debounceTapGestureRecognizer(interval: TimeInterval = 2, queue: DispatchQueue = DispatchQueue.main,callback: @escaping (UIView) -> Void) {
         
-        self.base.swe.debounce(interval: interval, queue: queue) {
+        self.base.ex.debounce(interval: interval, queue: queue) {
             callback(self.base)
         }
         
-        self.base.swe.tapGestureRecognizer { (ges) in
-            ges.view?.swe.debounceCall()
+        self.base.ex.tapGestureRecognizer { (ges) in
+            ges.view?.ex.debounceCall()
         }
         
     }
-    
-    func tapGestureRecognizer(callback: @escaping (UIGestureRecognizer) -> Void) {
+    // MARK: 点击事件
+    func tapGestureRecognizer(taps: Int = 1, callback: @escaping (UIGestureRecognizer) -> Void) {
         let tap = UITapGestureRecognizer()
+        tap.numberOfTapsRequired = taps
         self.base.addGestureRecognizer(tap)
-        let target = YYBGestureTarget(tap) { (tap) in
+        let target = TBGestureTarget(tap) { (tap) in
             callback(tap)
         }
         
         if self.gestures == nil {
-            self.gestures = [YYBGestureTarget]()
+            self.gestures = [TBGestureTarget]()
         }
         
         self.gestures?.append(target)
@@ -246,12 +247,12 @@ public extension SwiftExKit where Base: UIView {
     func longPressGestureRecognizer(callback: @escaping (UIGestureRecognizer) -> Void) {
         let longPress = UILongPressGestureRecognizer()
         self.base.addGestureRecognizer(longPress)
-        let target = YYBGestureTarget(longPress) { (long) in
+        let target = TBGestureTarget(longPress) { (long) in
             callback(long)
         }
         
         if self.gestures == nil {
-            self.gestures = [YYBGestureTarget]()
+            self.gestures = [TBGestureTarget]()
         }
         
         self.gestures?.append(target)
@@ -261,12 +262,12 @@ public extension SwiftExKit where Base: UIView {
         let left = UISwipeGestureRecognizer()
         left.direction = .left
         self.base.addGestureRecognizer(left)
-        let target = YYBGestureTarget(left) { (left) in
+        let target = TBGestureTarget(left) { (left) in
             callback(left)
         }
         
         if self.gestures == nil {
-            self.gestures = [YYBGestureTarget]()
+            self.gestures = [TBGestureTarget]()
         }
         
         self.gestures?.append(target)
@@ -276,12 +277,12 @@ public extension SwiftExKit where Base: UIView {
         let right = UISwipeGestureRecognizer()
         right.direction = .right
         self.base.addGestureRecognizer(right)
-        let target = YYBGestureTarget(right) { (right) in
+        let target = TBGestureTarget(right) { (right) in
             callback(right)
         }
         
         if self.gestures == nil {
-            self.gestures = [YYBGestureTarget]()
+            self.gestures = [TBGestureTarget]()
         }
         
         self.gestures?.append(target)
@@ -292,12 +293,12 @@ public extension SwiftExKit where Base: UIView {
         let up = UISwipeGestureRecognizer()
         up.direction = .up
         self.base.addGestureRecognizer(up)
-        let target = YYBGestureTarget(up) { (up) in
+        let target = TBGestureTarget(up) { (up) in
             callback(up)
         }
         
         if self.gestures == nil {
-            self.gestures = [YYBGestureTarget]()
+            self.gestures = [TBGestureTarget]()
         }
         
         self.gestures?.append(target)
@@ -308,12 +309,27 @@ public extension SwiftExKit where Base: UIView {
         let down = UISwipeGestureRecognizer()
         down.direction = .down
         self.base.addGestureRecognizer(down)
-        let target = YYBGestureTarget(down) { (right) in
+        let target = TBGestureTarget(down) { (right) in
             callback(right)
         }
         
         if self.gestures == nil {
-            self.gestures = [YYBGestureTarget]()
+            self.gestures = [TBGestureTarget]()
+        }
+        
+        self.gestures?.append(target)
+    }
+    
+    // MARK: 下划
+    func panGestureRecognizer(callback: @escaping (UIGestureRecognizer) -> Void) {
+        let pan = UIPanGestureRecognizer()
+        self.base.addGestureRecognizer(pan)
+        let target = TBGestureTarget(pan) { (right) in
+            callback(right)
+        }
+        
+        if self.gestures == nil {
+            self.gestures = [TBGestureTarget]()
         }
         
         self.gestures?.append(target)
@@ -331,29 +347,29 @@ public extension SwiftExKit where Base: UIView {
     
     // MARK: - 旋转
     func rotationX(_ x: CGFloat) {
-        self.base.layer.swe.rotationX(x)
+        self.base.layer.ex.rotationX(x)
     }
     
     func rotationY(_ y: CGFloat) {
-        self.base.layer.swe.rotationY(y)
+        self.base.layer.ex.rotationY(y)
     }
     
     func rotationZ(_ z: CGFloat) {
-        self.base.layer.swe.rotationZ(z)
+        self.base.layer.ex.rotationZ(z)
     }
     
     func rotation(x: CGFloat, y: CGFloat, z: CGFloat) {
-        self.base.layer.swe.rotation(x: x, y: y, z: z)
+        self.base.layer.ex.rotation(x: x, y: y, z: z)
     }
     
     // MARK: - 缩放
     func scale(x: CGFloat = 1.0, y: CGFloat = 1.0, z: CGFloat = 1.0) {
-        self.base.layer.swe.scale(x: x, y: y, z: z)
+        self.base.layer.ex.scale(x: x, y: y, z: z)
     }
     
     // MARK: - 平移
     func translation(x: CGFloat = 0.0, y: CGFloat = 0.0, z: CGFloat = 0.0) {
-        self.base.layer.swe.translation(x: x, y: y, z: z)
+        self.base.layer.ex.translation(x: x, y: y, z: z)
     }
     
     // 设置部分圆角
@@ -363,6 +379,15 @@ public extension SwiftExKit where Base: UIView {
         shape.path = bezierpath.cgPath
         
         self.base.layer.mask = shape
+    }
+    
+    func roundCorners(corners:UIRectCorner, with radii:CGFloat, fillColor: UIColor){
+        let bezierpath:UIBezierPath = UIBezierPath.init(roundedRect: (self.base.bounds), byRoundingCorners: corners, cornerRadii: CGSize(width: radii, height: radii))
+        let shape:CAShapeLayer = CAShapeLayer.init()
+        shape.path = bezierpath.cgPath
+        shape.strokeColor = fillColor.cgColor
+        shape.lineWidth = 10
+        self.base.layer.addSublayer(shape)
     }
 
     // 设置圆角和阴影
@@ -389,10 +414,10 @@ public extension SwiftExKit where Base: UIView {
 }
 
 /// UIView 手势事件监听
-fileprivate class YYBGestureTarget: NSObject {
+fileprivate class TBGestureTarget: NSObject {
     typealias Callback = (UIGestureRecognizer) -> Void
     
-    let selector = #selector(YYBGestureTarget.eventHandler(_:))
+    let selector = #selector(TBGestureTarget.eventHandler(_:))
     
     weak var gestureRecognizer: UIGestureRecognizer?
     var callback: Callback?
@@ -420,5 +445,7 @@ fileprivate class YYBGestureTarget: NSObject {
     deinit {
         self.gestureRecognizer?.removeTarget(self, action: selector)
         self.callback = nil
+        
+//        YYLog("\(self) ====== 释放了")
     }
 }

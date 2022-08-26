@@ -1,11 +1,12 @@
 //
 //  UIDevice+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 1/4/21.
 //
 
 import UIKit
+import Network
 
 public extension SwiftExKit where Base: UIDevice {
     /// uuid
@@ -29,7 +30,7 @@ public extension SwiftExKit where Base: UIDevice {
 
     /// 系统版本
     static var systemFloatVersion: Float {
-        return systemVersion.swe.floatValue ?? 0
+        return systemVersion.ex.floatValue ?? 0
     }
 
     /// 设备别名
@@ -37,9 +38,25 @@ public extension SwiftExKit where Base: UIDevice {
         return UIDevice.current.name
     }
 
-    /// 设备语言
+    /// 手机系统首选的语言
     static var deviceLanguage: String {
         return Bundle.main.preferredLocalizations[0]
+    }
+    /// 当前手机设置的语言
+    static var currentLanguage: String {
+        // 获取到首选语言列表
+        guard let appLanguages = UserDefaults.standard.value(forKey: "AppleLanguages") as? [String], appLanguages.count > 0 else {
+            return deviceLanguage
+        }
+        // 首选语言第一个就是当前设置语言
+        var currentLanguage = appLanguages[0]
+        // 地区编码
+        let regionCode = Locale.current.regionCode ?? ""
+        // 把语言中的地区码移除
+        if currentLanguage.contains(regionCode), let range = currentLanguage.range(of: "-\(regionCode)") {
+            currentLanguage.removeSubrange(range)
+        }
+        return currentLanguage
     }
 
     
@@ -102,8 +119,15 @@ public extension SwiftExKit where Base: UIDevice {
     static var L3CacheSize: Int {
         return self.getSysInfo(HW_L3CACHESIZE)
     }
-    
-
+    /// 网络连接状态查询
+    /// 在使用界面销毁前调用monitor.cancel()关闭网络检查
+    @available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
+    static func networkMonitor(_ updateBlock: ((_ newPath: NWPath) -> Void)?) -> NWPathMonitor {
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = updateBlock
+        monitor.start(queue: DispatchQueue.global())
+        return monitor 
+    }
 }
 
 

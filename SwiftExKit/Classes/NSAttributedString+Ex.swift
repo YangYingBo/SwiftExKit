@@ -1,6 +1,6 @@
 //
 //  NSAttributedString+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 1/8/21.
 //

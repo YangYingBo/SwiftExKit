@@ -1,6 +1,6 @@
 //
 //  UIViewController+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/29/20.
 //
@@ -35,36 +35,36 @@ public extension SwiftExKit where Base: UIViewController {
     /// 导航栏颜色
     var navigationBarColor: UIColor? {
         get {
-            return self.base.navigationController?.swe.barTintColor
+            return self.base.navigationController?.ex.barTintColor
         } set(value) {
-            self.base.navigationController?.swe.barTintColor = value
+            self.base.navigationController?.ex.barTintColor = value
         }
     }
     
     /// 设置左按钮(标题按钮)
     func leftBarButtonItem(title: String, titleColor: UIColor, textAlignment: NSTextAlignment = .center, actionBlock: @escaping (UIControl)->()) {
-        self.base.navigationItem.swe.leftBarButtonItem(title: title, titleColor: titleColor, textAlignment:textAlignment, actionBlock: actionBlock)
+        self.base.navigationItem.ex.leftBarButtonItem(title: title, titleColor: titleColor, textAlignment:textAlignment, actionBlock: actionBlock)
     }
     /// 设置右按钮(标题按钮)
     func rightBarButtonItem(title: String, titleColor: UIColor, textAlignment: NSTextAlignment = .center, actionBlock: @escaping (UIControl)->()) {
-        self.base.navigationItem.swe.rightBarButtonItem(title: title, titleColor: titleColor, textAlignment:textAlignment, actionBlock: actionBlock)
+        self.base.navigationItem.ex.rightBarButtonItem(title: title, titleColor: titleColor, textAlignment:textAlignment, actionBlock: actionBlock)
     }
     /// 设置左按钮(图片按钮)
     func leftBarButtonItem(normalImage: UIImage, selectedImage: UIImage, actionBlock: @escaping (UIControl)->()) {
-        self.base.navigationItem.swe.leftBarButtonItem(normalImage: normalImage, selectedImage: selectedImage, actionBlock: actionBlock)
+        self.base.navigationItem.ex.leftBarButtonItem(normalImage: normalImage, selectedImage: selectedImage, actionBlock: actionBlock)
     }
     /// 设置右按钮(图片按钮)
     func rightBarButtonItem(normalImage: UIImage, selectedImage: UIImage, actionBlock: @escaping (UIControl)->()) {
-        self.base.navigationItem.swe.rightBarButtonItem(normalImage: normalImage, selectedImage: selectedImage, actionBlock: actionBlock)
+        self.base.navigationItem.ex.rightBarButtonItem(normalImage: normalImage, selectedImage: selectedImage, actionBlock: actionBlock)
     }
     
     /// 设置左按钮(图片按钮)
     func leftBarButtonItems(nomarImage: [UIImage], seleteImage: [UIImage], actionBlock: @escaping (Int)->()) {
-        self.base.navigationItem.swe.leftBarButtonItems(normarImages: nomarImage, selectedImages: seleteImage, actionBlock: actionBlock)
+        self.base.navigationItem.ex.leftBarButtonItems(normarImages: nomarImage, selectedImages: seleteImage, actionBlock: actionBlock)
     }
     /// 设置右按钮(图片按钮)
     func rightBarButtonItems(nomarImage: [UIImage], seleteImage: [UIImage], actionBlock: @escaping (Int)->()) {
-        self.base.navigationItem.swe.rightBarButtonItems(normarImages: nomarImage, selectedImages: seleteImage, actionBlock: actionBlock)
+        self.base.navigationItem.ex.rightBarButtonItems(normarImages: nomarImage, selectedImages: seleteImage, actionBlock: actionBlock)
     }
     
 }

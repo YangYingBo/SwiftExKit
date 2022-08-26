@@ -1,6 +1,6 @@
 //
 //  UIBarButtonItem+Ex.swift
-//  SwiftExKit
+//  Swift类拓展
 //
 //  Created by yangyb on 12/28/20.
 //
@@ -24,7 +24,7 @@ public extension SwiftExKit where Base: UIBarButtonItem {
         
         button.frame = buttonFrame
         
-        button.swe.whenClick(event: .touchUpInside, callback: actionBlock)
+        button.ex.whenClick(event: .touchUpInside, callback: actionBlock)
         
         return UIBarButtonItem(customView: button)
         
@@ -56,9 +56,9 @@ public extension SwiftExKit where Base: UIBarButtonItem {
         button.titleLabel?.numberOfLines = 0
         button.titleLabel?.textAlignment = textAlignment
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        let buttonFrame = CGRect(x: 0, y: 0, width: title.swe.size.width, height: title.swe.size.height)
+        let buttonFrame = CGRect(x: 0, y: 0, width: title.ex.size.width, height: title.ex.size.height)
         button.frame = buttonFrame
-        button.swe.whenClick(event: .touchUpInside, callback: actionBlock)
+        button.ex.whenClick(event: .touchUpInside, callback: actionBlock)
         return UIBarButtonItem(customView: button)
         
     }
